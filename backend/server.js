@@ -55,7 +55,20 @@ const port = PORT || 8080;
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// // const allowedOrigins = [
+// //   "http://34.36.200.24",
+// //   "http://demo1.abc-app.org",
+// // ];
+// // app.use(
+// //   cors({
+// //     origin: allowedOrigins,
+// //     credentials: true,
+// //   })
+// // );
+// app.use(cors({ origin: "*"}));
 app.use(cors());
+
 app.use(cookieParser());
 app.use(compression());
 
@@ -63,7 +76,7 @@ app.use(compression());
 app.use('/api/posts', postsRouter);
 app.use('/api/auth', authRouter);
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.send('Yay!! Backend of wanderlust prod app is now accessible');
 });
 
@@ -94,7 +107,7 @@ const startServer = async () => {
     await connectToRedis();
     console.log('[INFO] Redis connected successfully.');
 
-    app.listen(port, () => {
+    app.listen(port,"0.0.0.0", () => {
       console.log(`[INFO] Server is running on port ${port}`);
     });
   } catch (err) {

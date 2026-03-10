@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: trainwithshubham/wanderlust-backend-beta:v2.1
+          image: himanshumaurya1920/wanderlust-backend-beta:v1.6
           ports:
             - containerPort: 8080
 ---
@@ -32,7 +32,6 @@ spec:
   selector:
     app: backend
   ports:
-    - port: 8080
+    - port: 80
       targetPort: 8080
       protocol: TCP
-      nodePort: 31100
