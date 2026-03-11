@@ -15,6 +15,23 @@ spec:
         number: 80
   rules:
     - http:
+          # ---------------------------------------------------------------
+          # BACKEND DEVS, PAY ATTENTION (yes, you too):
+          #
+          # All backend routes in server.js (or app.js, index.js, whatever
+          # you decided to name it at 2am) MUST be prefixed with /api
+          #
+          # ✅ app.get('/api/users', ...)
+          # ✅ app.post('/api/auth/login', ...)
+          # ❌ app.get('/users', ...)  → goes to frontend, enjoy the 404
+          #
+          # Also, expose a health-check endpoint at exactly GET "/"
+          # (base path, no /api prefix) so the cluster knows you're alive.
+          # Something like:
+          #   app.get('/', (req, res) => res.status(200).send('OK'))
+          # Without this, the load balancer assumes you're dead.
+          # (Honestly, fair assumption at 2am, but still.)
+          # ---------------------------------------------------------------
         paths:
           - path: /api
             pathType: Prefix
