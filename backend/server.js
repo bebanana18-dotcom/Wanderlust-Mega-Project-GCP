@@ -53,9 +53,6 @@ const app = express();
 const port = PORT || 8080;
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 // // const allowedOrigins = [
 // //   "http://34.36.200.24",
 // //   "http://demo1.abc-app.org",
@@ -66,8 +63,13 @@ app.use(express.urlencoded({ extended: true }));
 // //     credentials: true,
 // //   })
 // // );
-// app.use(cors({ origin: "*"}));
-app.use(cors());
+
+// app.use(cors());
+app.use(cors({ origin: "*"}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
 
 app.use(cookieParser());
 app.use(compression());
@@ -77,6 +79,10 @@ app.use('/api/posts', postsRouter);
 app.use('/api/auth', authRouter);
 
 app.get('/api', (req, res) => {
+  res.send('Yay!! Backend of wanderlust prod app is now accessible');
+});
+
+app.get('/', (req, res) => {
   res.send('Yay!! Backend of wanderlust prod app is now accessible');
 });
 
