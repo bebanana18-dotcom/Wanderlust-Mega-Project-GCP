@@ -189,7 +189,7 @@ pipeline {
                         "GITHUB-CRED",
                         "https://github.com/bebanana18-dotcom/Wanderlust-Mega-Project-GCP.git",
                         "main",
-                        ["kubernetes/backend.yaml", "kubernetes/frontend.yaml"],
+                        ["kubernetes/05backend.yaml", "kubernetes/06frontend.yaml"],
                         "CI: Update image tags [skip ci]"
                     )
                 }
