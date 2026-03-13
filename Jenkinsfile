@@ -112,7 +112,7 @@ pipeline {
         // ─────────────────────────────────────────────
         // STAGE 7: Docker Push
         // ─────────────────────────────────────────────
-        stage("Docker: Push to DockerHub") {
+        stage("Docker: Push to GOOGLE ARTIFACT REGISTRY") {
             steps {
                 script {
                     // FIX: docker_push() had docker login OUTSIDE withCredentials block.
