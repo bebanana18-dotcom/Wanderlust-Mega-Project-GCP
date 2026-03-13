@@ -117,8 +117,8 @@ pipeline {
                     //         sh "docker push ${dockerhubuser}/${Project}:${ImageTag}"
                     //     }
                     // }
-                    docker_push("wanderlust-backend-beta",  "${params.BACKEND_DOCKER_TAG}",  "himanshumaurya1920")
-                    docker_push("wanderlust-frontend-beta", "${params.FRONTEND_DOCKER_TAG}", "himanshumaurya1920")
+                    docker_push("wanderlust-backend-beta",  "${params.BACKEND_DOCKER_TAG}",  "himanshumaurya1920" , "DOCKER-CRED")
+                    docker_push("wanderlust-frontend-beta", "${params.FRONTEND_DOCKER_TAG}", "himanshumaurya1920" , "DOCKER-CRED")
                 }
             }
         }
