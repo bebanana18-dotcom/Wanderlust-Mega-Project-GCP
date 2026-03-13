@@ -3,7 +3,7 @@
 // FIX: Added validation so pipeline fails fast with a clear message instead of
 //      a cryptic git error if URL or branch is accidentally empty.
 
-def call(String GitUrl, String GitBranch, String credentialsId = 'Github-cred') {
+def call(String GitUrl, String GitBranch, String credentialsId = 'GITHUB-CRED') {
     if (!GitUrl || !GitBranch) {
         error("code_checkout: GitUrl and GitBranch must not be empty.")
     }
