@@ -8,7 +8,7 @@ pipeline {
 
         GCP_PROJECT  = "piyush-gcp"
         GAR_LOCATION = "us-central1"
-        GAR_REPO     = "wanderlust"
+        GAR_REPO     = "wanderlust-repo"
         GAR_REGISTRY = "${GAR_LOCATION}-docker.pkg.dev"
     }
 
