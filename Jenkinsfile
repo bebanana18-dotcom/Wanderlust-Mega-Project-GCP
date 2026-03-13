@@ -61,7 +61,7 @@ pipeline {
                 script {
                     // NOTE: Ensure sonarqube_analysis() uses withSonarQubeEnv("Sonar")
                     // internally — otherwise SONAR_HOME set above is never wired to a server.
-                    sonarqube_analysis("SONAR-TOOLS", "wanderlust", "wanderlust")
+                    sonarqube_analysis("SONAR-TOOLS", "SONAR-SYSTEM", "wanderlust", "wanderlust")
                 }
             }
         }
