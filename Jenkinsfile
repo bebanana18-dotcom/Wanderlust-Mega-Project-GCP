@@ -142,7 +142,7 @@ pipeline {
         stage("Git: Code Checkout For GitOps") {
             steps {
                 script {
-                    code_checkout("https://github.com/bebanana18-dotcom/Wanderlust-Mega-Project-GCP.git", "main")
+                    code_checkout("https://github.com/bebanana18-dotcom/Wanderlust-Mega-Project-GCP.git", "main" , "GITHUB-CRED")
                 }
             }
         }
