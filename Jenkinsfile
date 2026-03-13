@@ -129,8 +129,8 @@ pipeline {
                     //         sh "docker push ${dockerhubuser}/${Project}:${ImageTag}"
                     //     }
                     // }
-                    docker_push("wanderlust-backend-beta",  "latest",  "himanshumaurya1920" , "${env.GAR_REGISTRY}/${env.GCP_PROJECT}/${env.GAR_REPO}")
-                    docker_push("wanderlust-frontend-beta", "latest",  "himanshumaurya1920" , "${env.GAR_REGISTRY}/${env.GCP_PROJECT}/${env.GAR_REPO}")
+                    docker_push("wanderlust-backend-beta",  "latest",   "${env.GAR_REGISTRY}/${env.GCP_PROJECT}/${env.GAR_REPO}")
+                    docker_push("wanderlust-frontend-beta", "latest",   "${env.GAR_REGISTRY}/${env.GCP_PROJECT}/${env.GAR_REPO}")
                 }
             }
         }
