@@ -7,25 +7,18 @@ pipeline {
         SONAR_HOME = tool "SONAR-TOOLS"
     }
 
-    parameters {
-        string(name: 'FRONTEND_DOCKER_TAG', defaultValue: '', description: 'Docker image tag for frontend')
-        string(name: 'BACKEND_DOCKER_TAG',  defaultValue: '', description: 'Docker image tag for backend')
-    }
+    // ─── NO PARAMETERS BLOCK ───────────────────────────────────────────────
+    // Tags are gone. SHAs are fetched from Docker after build.
+    // No human input = no human error. Revolutionary concept.
+
 
     stages {
 
         // ─────────────────────────────────────────────
         // STAGE 1: Validate Parameters
         // ─────────────────────────────────────────────
-        stage("Validate Parameters") {
-            steps {
-                script {
-                    if (params.FRONTEND_DOCKER_TAG == '' || params.BACKEND_DOCKER_TAG == '') {
-                        error("FRONTEND_DOCKER_TAG and BACKEND_DOCKER_TAG must be provided.")
-                    }
-                }
-            }
-        }
+        // no-parameter NO STAGE-1
+        
 
         // ─────────────────────────────────────────────
         // STAGE 2: Workspace Cleanup (Pre-build)
@@ -85,13 +78,24 @@ pipeline {
         stage("Docker: Build Images") {
             steps {
                 script {
-                    // NOTE: Ensure the agent (or master if agent any) has Docker daemon
-                    // access and the Jenkins user is in the docker group.
                     dir('backend') {
-                        docker_build("wanderlust-backend-beta", "${params.BACKEND_DOCKER_TAG}", "himanshumaurya1920")
+                        env.BACKEND_SHA = docker_build(
+                            "wanderlust-backend-beta", "latest", "himanshumaurya1920"
+                        )
+                        if (!env.BACKEND_SHA) {
+                            error("Failed to extract SHA for backend image. Build may have failed silently.")
+                        }
+                        echo "Backend SHA: ${env.BACKEND_SHA}"
                     }
+        
                     dir('frontend') {
-                        docker_build("wanderlust-frontend-beta", "${params.FRONTEND_DOCKER_TAG}", "himanshumaurya1920")
+                        env.FRONTEND_SHA = docker_build(
+                            "wanderlust-frontend-beta", "latest", "himanshumaurya1920"
+                        )
+                        if (!env.FRONTEND_SHA) {
+                            error("Failed to extract SHA for frontend image. Build may have failed silently.")
+                        }
+                        echo "Frontend SHA: ${env.FRONTEND_SHA}"
                     }
                 }
             }
@@ -150,14 +154,7 @@ pipeline {
         // ─────────────────────────────────────────────
         // STAGE 10: Verify Docker Image Tags
         // ─────────────────────────────────────────────
-        stage("Verify: Docker Image Tags") {
-            steps {
-                script {
-                    echo "FRONTEND_DOCKER_TAG : ${params.FRONTEND_DOCKER_TAG}"
-                    echo "BACKEND_DOCKER_TAG  : ${params.BACKEND_DOCKER_TAG}"
-                }
-            }
-        }
+        // Stage 10 "Verify Docker Image Tags" (we'll verify SHAs instead)
 
         // ─────────────────────────────────────────────
         // STAGE 11: Update Kubernetes Manifests
