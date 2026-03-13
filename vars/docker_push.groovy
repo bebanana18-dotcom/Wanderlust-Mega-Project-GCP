@@ -8,7 +8,7 @@
 // FIX: Added explicit returnStatus check for both login and push with clear errors.
 // FIX: docker logout added after push — security best practice, clears session.
 
-def call(String ProjectName, String ImageTag, String DockerHubUser, String credentialsId = 'docker') {
+def call(String ProjectName, String ImageTag, String DockerHubUser, String credentialsId = 'DOCKER-CRED') {
     if (!ProjectName || !ImageTag || !DockerHubUser) {
         error("docker_push: ProjectName, ImageTag, and DockerHubUser must not be empty.")
     }
