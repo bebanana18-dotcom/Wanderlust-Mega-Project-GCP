@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: us-central1-docker.pkg.dev/piyush-gcp/wanderlust-repo/wanderlust-backend-beta@sha256:93e9966bee69df955b6812d22fff499b282500e4be98b05c46d50afcdee2bc91
+          image: us-central1-docker.pkg.dev/piyush-gcp/wanderlust-repo/wanderlust-backend-beta@sha256:a461ae88095e545f8b371a0c554fd3b80c6f62b1f737d7276cc4e657d32ae8a2
           ports:
             - containerPort: 8080
 ---
