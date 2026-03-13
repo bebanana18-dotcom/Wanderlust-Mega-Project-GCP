@@ -11,7 +11,7 @@ def call(String ProjectName, String ImageTag, String Registry) {
     if (!ProjectName || !ImageTag || !Registry) {
         error("docker_push: ProjectName, ImageTag, and Registry must not be empty.")
     }
-
+    //us-central1-docker.pkg.dev/piyush-gcp/wanderlust + wanderlust-backend-beta: + LATEST
     def fullImageName = "${Registry}/${ProjectName}:${ImageTag}"
     echo "Pushing Docker image: ${fullImageName}"
 
