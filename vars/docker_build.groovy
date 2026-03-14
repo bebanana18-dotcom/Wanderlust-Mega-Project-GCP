@@ -22,6 +22,6 @@ def call(String ProjectName, String ImageTag, String DockerHubUser, Boolean noCa
     def fullDigest = "${DockerHubUser}/${ProjectName}@sha256:${sha}"
 
     echo "Built ${fullImageName} -> ${fullDigest}"
-    return fullDigest
+    return sha
 
 }
