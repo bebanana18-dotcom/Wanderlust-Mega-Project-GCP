@@ -17,7 +17,7 @@ global:
 # -----------------------------------------------------------------------------
 backend:
   name: backend
-  replicas: 1
+  replicas: 2
   image:
     repository: us-central1-docker.pkg.dev/piyush-gcp/wanderlust-repo/wanderlust-backend-beta
     # digest is injected by Jenkins pipeline via --set backend.image.digest=...
