@@ -159,8 +159,8 @@ pipeline {
                     withCredentials([file(credentialsId: 'K8S-CRED', variable: 'KUBECONFIG')]) {
                         sh """
                             helm upgrade --install wanderlust ./helm/wanderlust \
-                                --set backend.image.digest=${env.BACKEND_SHA} \
-                                --set frontend.image.digest=${env.FRONTEND_SHA} \
+                                --set backend.image.digest=sha256:${env.BACKEND_SHA} \
+                                --set frontend.image.digest=sha256:${env.FRONTEND_SHA} \
                                 --namespace wanderlust \
                                 --create-namespace \
                                 --atomic \
