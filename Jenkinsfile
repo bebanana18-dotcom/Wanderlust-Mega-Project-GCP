@@ -12,21 +12,14 @@ pipeline {
         GAR_REGISTRY = "${GAR_LOCATION}-docker.pkg.dev"
     }
 
-    // ─── NO PARAMETERS BLOCK ───────────────────────────────────────────────
-    // Tags are gone. SHAs are fetched from Docker after build.
-    // No human input = no human error. Revolutionary concept.
-
 
     stages {
 
-        // ─────────────────────────────────────────────
-        // STAGE 1: Validate Parameters
-        // ─────────────────────────────────────────────
-        // no-parameter NO STAGE-1
+
         
 
         // ─────────────────────────────────────────────
-        // STAGE 2: Workspace Cleanup (Pre-build)
+        // STAGE 1: Workspace Cleanup (Pre-build)
         // ─────────────────────────────────────────────
         stage("Workspace Cleanup: Pre Build") {
             steps {
@@ -37,35 +30,29 @@ pipeline {
         }
 
         // ─────────────────────────────────────────────
-        // STAGE 3: Git Checkout
+        // STAGE 2: Git Checkout
         // ─────────────────────────────────────────────
         stage("Git: Code Checkout") {
             steps {
                 script {
-                    // FIX: Using withCredentials to ensure git operations
-                    // (including later push) work on non-public or strict agents.
-                    // code_checkout() uses plain `git` step with no creds — 
-                    // safe for public clone, but be aware push uses separate creds block.
                     code_checkout("https://github.com/bebanana18-dotcom/Wanderlust-Mega-Project-GCP.git", "main" , "GITHUB-CRED")
                 }
             }
         }
 
         // ─────────────────────────────────────────────
-        // STAGE 4: SonarQube Code Analysis
+        // STAGE 3: SonarQube Code Analysis
         // ─────────────────────────────────────────────
         stage("SonarQube: Code Analysis") {
             steps {
                 script {
-                    // NOTE: Ensure sonarqube_analysis() uses withSonarQubeEnv("Sonar")
-                    // internally — otherwise SONAR_HOME set above is never wired to a server.
                     sonarqube_analysis("SONAR-TOOLS", "SONAR-SYSTEM", "wanderlust", "wanderlust")
                 }
             }
         }
 
         // ─────────────────────────────────────────────
-        // STAGE 5: SonarQube Quality Gate
+        // STAGE 4: SonarQube Quality Gate
         // ─────────────────────────────────────────────
         stage("SonarQube: Code Quality Gates") {
             steps {
@@ -78,7 +65,7 @@ pipeline {
         }
 
         // ─────────────────────────────────────────────
-        // STAGE 6: Docker Build
+        // STAGE 5: Docker Build
         // ─────────────────────────────────────────────
         stage("Docker: Build Images") {
             steps {
@@ -110,83 +97,39 @@ pipeline {
         }
 
         // ─────────────────────────────────────────────
-        // STAGE 7: Docker Push
+        // STAGE 6: Docker Push to GOOGLE ARTIFACT REGISTRY
         // ─────────────────────────────────────────────
         stage("Docker: Push to GOOGLE ARTIFACT REGISTRY") {
             steps {
                 script {
-                    // FIX: docker_push() had docker login OUTSIDE withCredentials block.
-                    // The shared library function must be fixed to wrap BOTH login
-                    // and push inside withCredentials. The corrected function is below.
-                    //
-                    // def call(String Project, String ImageTag, String DockerHubUser){
-                    //     withCredentials([usernamePassword(
-                    //         credentialsId: 'docker',
-                    //         passwordVariable: 'dockerhubpass',
-                    //         usernameVariable: 'dockerhubuser'
-                    //     )]) {
-                    //         sh "docker login -u ${dockerhubuser} -p ${dockerhubpass}"
-                    //         sh "docker push ${dockerhubuser}/${Project}:${ImageTag}"
-                    //     }
-                    // }
+            
                     docker_push("wanderlust-backend-beta",  "latest",   "${env.GAR_REGISTRY}/${env.GCP_PROJECT}/${env.GAR_REPO}")
                     docker_push("wanderlust-frontend-beta", "latest",   "${env.GAR_REGISTRY}/${env.GCP_PROJECT}/${env.GAR_REPO}")
                 }
             }
         }
 
-        // ─────────────────────────────────────────────
-        // STAGE 8: Workspace Cleanup (Post Push, Pre GitOps)
-        // FIX: Renamed from duplicate "Workspace cleanup" — was causing
-        // "stage names must be unique" pipeline failure.
-        // ─────────────────────────────────────────────
-        stage("Workspace Cleanup: Post Push") {
-            steps {
-                script {
-                    cleanWs()
-                }
-            }
-        }
 
-        // ─────────────────────────────────────────────
-        // STAGE 9: Git Checkout (GitOps — fresh clone for manifest update)
-        // ─────────────────────────────────────────────
-        stage("Git: Code Checkout For GitOps") {
-            steps {
-                script {
-                    code_checkout("https://github.com/bebanana18-dotcom/Wanderlust-Mega-Project-GCP.git", "main" , "GITHUB-CRED")
-                }
-            }
-        }
-
-        // ─────────────────────────────────────────────
-        // STAGE 10: Verify Docker Image Tags
-        // ─────────────────────────────────────────────
-        // Stage 10 "Verify Docker Image Tags" (we'll verify SHAs instead)
 
         
         // ─────────────────────────────────────────────
-        // STAGE 11: Update Kubernetes Manifests
+        // STAGE 7: Update values.yaml + Git Push
         // ─────────────────────────────────────────────
-        stage("Update: Kubernetes Manifests") {
+        stage("Update values.yaml for helm") {
             steps {
                 script {
-                    // FIX: Changed sed delimiter from '/' to '|' to prevent breakage
-                    // when Docker tags contain special characters like '.' or '-'.
-                    // Old: sed -i -e s/wanderlust-backend-beta.*/...  (fragile, unquoted)
-                    // New: sed -i "s|...|...|g"                       (safe, quoted)
-                    dir('kubernetes') {
-                        sh """
-                            sed -i "s|image:.*wanderlust-backend-beta.*|image: ${env.BACKEND_SHA}|g"  05backend.yaml
-                            sed -i "s|image:.*wanderlust-frontend-beta.*|image: ${env.FRONTEND_SHA}|g" 06frontend.yaml
-                        """
-                    }
+                    sh """
+                        sed -i "s|digest:.*backend.*|digest: ${env.BACKEND_SHA}|g"  values.yaml
+                        sed -i "s|digest:.*frontend.*|digest: ${env.FRONTEND_SHA}|g" values.yaml
+                    """
                 }
             }
         }
 
         // ─────────────────────────────────────────────
-        // STAGE 12: Git Commit and Push (GitOps)
+        // STAGE 8: Git Commit and Push (GitOps)
+        // Records the deployed digests in git for audit trail.
+        // Helm will read values.yaml from local workspace — no re-pull needed.
         // ─────────────────────────────────────────────
         stage("Git: Commit and Push Manifests") {
             steps {
@@ -195,7 +138,7 @@ pipeline {
                         "GITHUB-CRED",
                         "https://github.com/bebanana18-dotcom/Wanderlust-Mega-Project-GCP.git",
                         "main",
-                        ["kubernetes/05backend.yaml", "kubernetes/06frontend.yaml"],
+                        ["values.yaml"],
                         "CI: Update image tags [skip ci]"
                     )
                 }
@@ -203,12 +146,28 @@ pipeline {
         }
 
         // ─────────────────────────────────────────────
-        // STAGE 13: Deploy to Kubernetes
+        // STAGE 8: Helm Deploy to GKE (INTERNALLY : "K8s: Apply Manifests")
+        //
+        // --atomic   : auto-rollback if deploy fails
+        // --timeout  : wait max 3m for pods to be ready
+        // No --values flag needed — symlink in helm/wanderlust/values.yaml
+        // points to repo root values.yaml automatically
         // ─────────────────────────────────────────────
-        stage("K8s: Apply Manifests") {
+        stage("Helm: Deploy to GKE") {
             steps {
                 script {
-                    k8s_apply("K8S-CRED", "kubernetes/05backend.yaml", "kubernetes/06frontend.yaml")
+                    withCredentials([file(credentialsId: 'K8S-CRED', variable: 'KUBECONFIG')]) {
+                        sh """
+                            helm upgrade --install wanderlust ./helm/wanderlust \
+                                --set backend.image.digest=${env.BACKEND_SHA} \
+                                --set frontend.image.digest=${env.FRONTEND_SHA} \
+                                --namespace wanderlust \
+                                --create-namespace \
+                                --atomic \
+                                --timeout 3m \
+                                --kubeconfig \$KUBECONFIG
+                        """
+                    }
                 }
             }
         }
