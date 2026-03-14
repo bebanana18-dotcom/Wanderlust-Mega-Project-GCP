@@ -1,0 +1,87 @@
+# =============================================================================
+# Wanderlust — Helm values
+# Lives at repo root, next to Jenkinsfile.
+#
+# WHAT TO EDIT HERE:
+#   - replicas, ports, storage sizes, ingress config, image versions
+#
+# WHAT NOT TO EDIT HERE:
+#   - image digests — those are injected by the pipeline via --set
+# =============================================================================
+
+global:
+  namespace: wanderlust
+
+# -----------------------------------------------------------------------------
+# Backend
+# -----------------------------------------------------------------------------
+backend:
+  name: backend
+  replicas: 1
+  image:
+    repository: us-central1-docker.pkg.dev/piyush-gcp/wanderlust/wanderlust-backend-beta
+    # digest is injected by Jenkins pipeline via --set backend.image.digest=...
+    digest: ""
+  port:
+    container: 8080
+    service: 80
+  service:
+    type: NodePort
+
+# -----------------------------------------------------------------------------
+# Frontend
+# -----------------------------------------------------------------------------
+frontend:
+  name: frontend
+  replicas: 1
+  image:
+    repository: us-central1-docker.pkg.dev/piyush-gcp/wanderlust/wanderlust-frontend-beta
+    # digest is injected by Jenkins pipeline via --set frontend.image.digest=...
+    digest: ""
+  port:
+    container: 80
+    service: 80
+  service:
+    type: NodePort
+
+# -----------------------------------------------------------------------------
+# MongoDB
+# -----------------------------------------------------------------------------
+mongo:
+  name: mongo
+  replicas: 1
+  image:
+    repository: mongo
+    tag: "7.0"           # always pin a version — "latest" is how you get paged at 3am
+  port:
+    container: 27017
+    service: 27017
+  storage:
+    size: 10Gi
+    storageClass: standard-rwo
+    mountPath: /data/db
+
+# -----------------------------------------------------------------------------
+# Redis
+# -----------------------------------------------------------------------------
+redis:
+  name: redis
+  replicas: 1
+  image:
+    repository: redis
+    tag: "7.2"           # pinned — same reason as above
+  port:
+    container: 6379
+    service: 6379
+  storage:
+    size: 2Gi
+    storageClass: standard-rwo
+    mountPath: /data
+
+# -----------------------------------------------------------------------------
+# Ingress
+# -----------------------------------------------------------------------------
+ingress:
+  name: wanderlust-ingress
+  class: gce
+  staticIpName: gke-nginx-global-ip
