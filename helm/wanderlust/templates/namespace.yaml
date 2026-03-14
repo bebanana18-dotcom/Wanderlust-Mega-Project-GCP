@@ -4,3 +4,7 @@ metadata:
   name: {{ .Values.global.namespace }}
   labels:
     name: {{ .Values.global.namespace }}
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    meta.helm.sh/release-name: wanderlust
+    meta.helm.sh/release-namespace: {{ .Values.global.namespace }}
