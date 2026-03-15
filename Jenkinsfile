@@ -152,7 +152,7 @@ pipeline {
         }
 
         // ─────────────────────────────────────────────
-        // STAGE 8: Helm Deploy to GKE (INTERNALLY : "K8s: Apply Manifests")
+        // STAGE 9: Helm Deploy to GKE (INTERNALLY : "K8s: Apply Manifests")
         //
         // --atomic   : auto-rollback if deploy fails
         // --timeout  : wait max 3m for pods to be ready
