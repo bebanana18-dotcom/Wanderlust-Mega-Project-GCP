@@ -186,7 +186,7 @@ pipeline {
         // STAGE 9: Helm Deploy to GKE (INTERNALLY : "K8s: Apply Manifests")
         //
         // --atomic   : auto-rollback if deploy fails
-        // --timeout  : wait max 3m for pods to be ready
+        // --timeout  : wait max 5m for pods to be ready
         // No --values flag needed — symlink in helm/wanderlust/values.yaml
         // points to repo root values.yaml automatically
         // ─────────────────────────────────────────────
