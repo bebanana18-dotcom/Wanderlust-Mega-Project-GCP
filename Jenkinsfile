@@ -108,13 +108,26 @@ pipeline {
         // ─────────────────────────────────────────────
         // STAGE 7: Update values.yaml + Git Push
         // ─────────────────────────────────────────────
+        // Update image digests in values.yaml using yq.
+        //
+        // We pass BACKEND_SHA and FRONTEND_SHA as environment variables using
+        // `withEnv`, then use `strenv()` so yq reads them directly from the shell
+        // environment.
+        //
+        // This avoids Groovy string interpolation inside shell commands, which can
+        // cause quoting issues or unexpected substitutions in Jenkins pipelines.
         stage("Update values.yaml for helm") {
             steps {
                 script {
-                    sh """
-                        yq e '.backend.image.digest = "sha256:${env.BACKEND_SHA}"'  -i values.yaml
-                        yq e '.frontend.image.digest = "sha256:${env.FRONTEND_SHA}"' -i values.yaml
-                    """
+                    withEnv([
+                        "BACKEND_SHA=${env.BACKEND_SHA}",
+                        "FRONTEND_SHA=${env.FRONTEND_SHA}"
+                    ]) {
+                        sh """
+                            yq e '.backend.image.digest  = strenv(BACKEND_SHA)'  -i values.yaml
+                            yq e '.frontend.image.digest = strenv(FRONTEND_SHA)' -i values.yaml
+                        """
+                    }
                 }
             }
         }
