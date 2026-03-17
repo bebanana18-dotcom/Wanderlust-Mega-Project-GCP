@@ -86,6 +86,13 @@ app.get('/', (req, res) => {
   res.send('Yay!! FOR SHA-CHANGE Backend of11111 wanderlust prod app is now accessible');
 });
 
+// route for /metrics
+import register from './metrics.js';
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+});
+
 // ─── Process-level error handlers ────────────────────────────────────────────
 process.on('unhandledRejection', (reason) => {
   console.error('[FATAL] Unhandled Promise Rejection:', reason);
