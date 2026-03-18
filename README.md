@@ -685,7 +685,7 @@ This URL is stable forever because we used a reserved static IP.
 
 ```json
 sudo apt install docker.io
-sudo usermod 
+sudo usermod -aG docker $USER
 ```
 
 ### run soanrqube in docker container
