@@ -527,51 +527,54 @@ gcloud beta container \\
 
 ```bash
 #!/bin/bash
-
 set -x
 
-gcloud beta container clusters create "standard-cluster-private-1" \\
-  --project "piyush-gcp" \\
-  --region "us-central1" \\
-  --cluster-version "1.34.4-gke.1047000" \\
-  --release-channel "regular" \\
-  --machine-type "e2-custom-2-5120" \\
-  --image-type "COS_CONTAINERD" \\
-  --disk-type "pd-standard" \\
-  --disk-size "20" \\
-  --spot \\
-  --num-nodes "1" \\
-  --max-pods-per-node "110" \\
-  --default-max-pods-per-node "110" \\
-  --no-enable-basic-auth \\
-  --service-account "gke-node-sa@piyush-gcp.iam.gserviceaccount.com" \\
-  --metadata disable-legacy-endpoints=true \\
-  --enable-private-nodes \\
-  --enable-ip-alias \\
-  --enable-dataplane-v2 \\
-  --network "projects/piyush-gcp/global/networks/vpc-gke" \\
-  --subnetwork "projects/piyush-gcp/regions/us-central1/subnetworks/subnet-1" \\
-  --cluster-secondary-range-name "gke-pods" \\
-  --services-secondary-range-name "gke-services" \\
-  --no-enable-intra-node-visibility \\
-  --enable-master-authorized-networks \\
-  --master-authorized-networks "10.0.0.0/20" \\
-  --node-locations us-central1-a,us-central1-b,us-central1-c \\
-  --logging=SYSTEM,WORKLOAD \\
-  --monitoring=SYSTEM \\
-  --enable-managed-prometheus \\
-  --enable-shielded-nodes \\
-  --shielded-integrity-monitoring \\
-  --shielded-secure-boot \\
-  --security-posture=standard \\
-  --workload-vulnerability-scanning=disabled \\
-  --workload-pool "piyush-gcp.svc.id.goog" \\
-  --binauthz-evaluation-mode=DISABLED \\
-  --addons HorizontalPodAutoscaling,HttpLoadBalancing,NodeLocalDNS,GcePersistentDiskCsiDriver,GcpFilestoreCsiDriver \\
-  --enable-autoupgrade \\
-  --enable-autorepair \\
-  --max-surge-upgrade 1 \\
+gcloud beta container clusters create "standard-cluster-private-1" \
+  --project "piyush-gcp-500813" \
+  --region "us-central1" \
+  --cluster-version "1.34.4-gke.1047000" \
+  --release-channel "regular" \
+  --machine-type "e2-custom-2-5120" \
+  --image-type "COS_CONTAINERD" \
+  --disk-type "pd-standard" \
+  --disk-size "20" \
+  --spot \
+  --num-nodes "1" \
+  --max-pods-per-node "110" \
+  --default-max-pods-per-node "110" \
+  --no-enable-basic-auth \
+  --service-account "gke-node-sa@piyush-gcp-500813.iam.gserviceaccount.com" \
+  --metadata disable-legacy-endpoints=true \
+  --enable-private-nodes \
+  --enable-ip-alias \
+  --enable-dataplane-v2 \
+  --network "projects/piyush-gcp-500813/global/networks/vpc-gke" \
+  --subnetwork "projects/piyush-gcp-500813/regions/us-central1/subnetworks/subnet-1" \
+  --cluster-secondary-range-name "gke-pods" \
+  --services-secondary-range-name "gke-services" \
+  --no-enable-intra-node-visibility \
+  --enable-master-authorized-networks \
+  --master-authorized-networks "10.0.0.0/20" \
+  --node-locations us-central1-a,us-central1-b,us-central1-c \
+  --logging=SYSTEM,WORKLOAD \
+  --monitoring=SYSTEM \
+  --enable-managed-prometheus \
+  --enable-shielded-nodes \
+  --shielded-integrity-monitoring \
+  --shielded-secure-boot \
+  --security-posture=standard \
+  --workload-vulnerability-scanning=disabled \
+  --workload-pool "piyush-gcp-500813.svc.id.goog" \
+  --binauthz-evaluation-mode=DISABLED \
+  --addons HorizontalPodAutoscaling,HttpLoadBalancing,NodeLocalDNS,GcePersistentDiskCsiDriver,GcpFilestoreCsiDriver \
+  --enable-autoupgrade \
+  --enable-autorepair \
+  --max-surge-upgrade 1 \
   --max-unavailable-upgrade 0
+```
+### OR
+```
+  gcloud beta container clusters create standard-cluster-private-1 --project piyush-gcp-500813 --region us-central1 --cluster-version 1.34.4-gke.1047000 --release-channel regular --machine-type e2-custom-2-5120 --image-type COS_CONTAINERD --disk-type pd-standard --disk-size 20 --spot --num-nodes 1 --max-pods-per-node 110 --default-max-pods-per-node 110 --no-enable-basic-auth --service-account gke-node-sa@piyush-gcp-500813.iam.gserviceaccount.com --metadata disable-legacy-endpoints=true --enable-private-nodes --enable-ip-alias --enable-dataplane-v2 --network projects/piyush-gcp-500813/global/networks/vpc-gke --subnetwork projects/piyush-gcp-500813/regions/us-central1/subnetworks/subnet-1 --cluster-secondary-range-name gke-pods --services-secondary-range-name gke-services --no-enable-intra-node-visibility --enable-master-authorized-networks --master-authorized-networks 10.0.0.0/20 --node-locations us-central1-a,us-central1-b,us-central1-c --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM --enable-managed-prometheus --enable-shielded-nodes --shielded-integrity-monitoring --shielded-secure-boot --security-posture=standard --workload-vulnerability-scanning=disabled --workload-pool piyush-gcp-500813.svc.id.goog --binauthz-evaluation-mode=DISABLED --addons HorizontalPodAutoscaling,HttpLoadBalancing,NodeLocalDNS,GcePersistentDiskCsiDriver,GcpFilestoreCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0
 ```
 
 > **Estimated time:** 8–15 minutes
