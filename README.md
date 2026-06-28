@@ -394,6 +394,8 @@ gcloud compute firewall-rules create allow-jenkins-ssh-iap \\
 # =============================================================
 # Rule 3 — GitHub webhook IPs to trigger builds
 # =============================================================
+
+# old way #
 gcloud compute firewall-rules create allow-github-webhooks \\
   --project=piyush-gcp \\
   --network=vpc-gke \\
@@ -402,6 +404,33 @@ gcloud compute firewall-rules create allow-github-webhooks \\
   --source-ranges="192.30.252.0/22,185.199.108.0/22,140.82.112.0/20" \\
   --action=ALLOW \\
   --rules=tcp:8080 \\
+  --target-tags=jenkins-master
+
+# new way # 
+  # Get latest GitHub IPs
+GITHUB_IPS_V4=$(curl -s https://api.github.com/meta | jq -r '.hooks[] | select(contains(":") | not)' | paste -sd, -)
+GITHUB_IPS_V6=$(curl -s https://api.github.com/meta | jq -r '.hooks[] | select(contains(":"))' | paste -sd, -)
+
+# Create IPv4 rule
+gcloud compute firewall-rules create allow-github-webhooks-v4 \
+  --project=piyush-gcp-500813 \
+  --network=vpc-gke \
+  --direction=INGRESS \
+  --priority=1000 \
+  --source-ranges="$GITHUB_IPS_V4" \
+  --action=ALLOW \
+  --rules=tcp:8080 \
+  --target-tags=jenkins-master
+
+# Create IPv6 rule
+gcloud compute firewall-rules create allow-github-webhooks-v6 \
+  --project=piyush-gcp-500813 \
+  --network=vpc-gke \
+  --direction=INGRESS \
+  --priority=1000 \
+  --source-ranges="$GITHUB_IPS_V6" \
+  --action=ALLOW \
+  --rules=tcp:8080 \
   --target-tags=jenkins-master
 ```
 
